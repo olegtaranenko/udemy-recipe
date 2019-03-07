@@ -6,7 +6,11 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Setter
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Recipe {
 
@@ -33,6 +37,7 @@ public class Recipe {
     @OneToOne(cascade = CascadeType.ALL)
     private Notes notes;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe")
     private Set<Ingredient> ingredients = new HashSet<>();
 
@@ -42,6 +47,7 @@ public class Recipe {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
 
+    @Builder.Default
     private Set<Category> categories = new HashSet<>();
 
     public void setNotes(Notes notes) {
@@ -55,4 +61,11 @@ public class Recipe {
         return this;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
