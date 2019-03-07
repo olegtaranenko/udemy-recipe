@@ -7,6 +7,5 @@ import org.springframework.stereotype.Service;
 /**
  * Created by user1 at Mar 05, 2019
  */
-@Service
 public interface RecipeRepository extends CrudRepository<Recipe, Long> {
 }
