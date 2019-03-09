@@ -1,6 +1,8 @@
 package com.olegtaranenko.udemy.recipe.controllers;
 
+import com.olegtaranenko.udemy.recipe.commands.IngredientCommand;
 import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
+import com.olegtaranenko.udemy.recipe.services.IngredientService;
 import com.olegtaranenko.udemy.recipe.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,20 +23,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IngredientControllerTest {
 
     private final Long RECIPE_ID = 1L;
+    private Long INGREDIENT_ID = 10L;
 
     @Mock
     RecipeService recipeService;
+
+    @Mock
+    IngredientService ingredientService;
 
     @Mock
     Model model;
 
     private IngredientController controller;
     private MockMvc mockMvc;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        controller = new IngredientController(recipeService);
+        controller = new IngredientController(recipeService, ingredientService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
@@ -42,22 +49,29 @@ public class IngredientControllerTest {
     @Test
     public void listIngredientsTest() throws Exception {
 
-/*
-        Set<Ingredient> ingredients = new HashSet<>();
-
-        ingredients.add(Ingredient.builder().id(1L).amount(new BigDecimal(0.5)).build());
-*/
-
         RecipeCommand command = RecipeCommand.builder().id(RECIPE_ID).build();
 
         when(recipeService.findCommandById(anyLong())).thenReturn(command);
 
-        mockMvc.perform(get("/recipe/1/ingredients"))
+        mockMvc.perform(get("/recipe/1/ingredient"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("/recipe/ingredient/list"))
                 .andExpect(model().attributeExists("recipe"));
 
         verify(recipeService, times(1)).findCommandById(anyLong());
+    }
 
+    @Test
+    public void showIngredientTest() throws Exception {
+        IngredientCommand command = IngredientCommand.builder().id(INGREDIENT_ID).build();
+
+        when(ingredientService.findCommandByRecipeIdAndId(anyLong(), anyLong())).thenReturn(command);
+
+        mockMvc.perform(get("/recipe/1/ingredient/10/show"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/ingredient/show"))
+                .andExpect((model().attributeExists("ingredient")));
+
+        verify(ingredientService, times(1)).findCommandByRecipeIdAndId(anyLong(), anyLong());
     }
 }

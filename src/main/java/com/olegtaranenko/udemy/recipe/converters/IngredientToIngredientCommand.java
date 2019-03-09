@@ -21,12 +21,19 @@ public class IngredientToIngredientCommand implements Converter<Ingredient, Ingr
         if (source == null) {
             return null;
         }
-        return IngredientCommand.builder()
+
+        IngredientCommand ret = IngredientCommand.builder()
                 .id(source.getId())
                 .description(source.getDescription())
                 .uom(uomConverter.convert(source.getUom()))
                 .amount(source.getAmount())
                 .build();
+
+        if (source.getRecipe() != null) {
+            ret.setRecipeId(source.getRecipe().getId());
+        }
+
+        return ret;
     }
 
 }
