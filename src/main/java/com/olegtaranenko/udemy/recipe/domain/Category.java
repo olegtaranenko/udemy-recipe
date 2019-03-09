@@ -12,6 +12,9 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(exclude = {"recipes"})
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
@@ -21,6 +24,7 @@ public class Category {
     private String description;
 
     @ManyToMany(mappedBy = "categories")
+    @Builder.Default
     private Set<Recipe> recipes = new HashSet<>();
 
 }

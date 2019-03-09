@@ -1,5 +1,7 @@
 package com.olegtaranenko.udemy.recipe.services;
 
+import com.olegtaranenko.udemy.recipe.converters.RecipeCommandToRecipe;
+import com.olegtaranenko.udemy.recipe.converters.RecipeToRecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
 import com.olegtaranenko.udemy.recipe.repositories.RecipeRepository;
 import org.junit.Before;
@@ -23,11 +25,17 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
+    @Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        recipeService = new RecipeServiceImpl(recipeRepository);
+        recipeService = new RecipeServiceImpl(recipeRepository, recipeToRecipeCommand, recipeCommandToRecipe);
     }
 
     @Test

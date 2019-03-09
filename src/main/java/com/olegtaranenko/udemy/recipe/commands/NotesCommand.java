@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryCommand {
+public class NotesCommand {
     private Long id;
-    private String description;
+    private String recipeNotes;
 }

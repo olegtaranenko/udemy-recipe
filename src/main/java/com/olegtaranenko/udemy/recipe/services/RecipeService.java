@@ -1,5 +1,6 @@
 package com.olegtaranenko.udemy.recipe.services;
 
+import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
 
 import java.util.Set;
@@ -12,4 +13,6 @@ public interface RecipeService {
     Set<Recipe> getRecipes();
 
     Recipe findById(Long id);
+
+    public RecipeCommand saveRecipeCommand(RecipeCommand command);
 }

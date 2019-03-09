@@ -1,10 +1,15 @@
 package com.olegtaranenko.udemy.recipe.services;
 
+import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
+import com.olegtaranenko.udemy.recipe.converters.RecipeCommandToRecipe;
+import com.olegtaranenko.udemy.recipe.converters.RecipeToRecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
 import com.olegtaranenko.udemy.recipe.repositories.RecipeRepository;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -14,13 +19,13 @@ import java.util.Set;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepository;
+    private final RecipeToRecipeCommand recipeToRecipeCommand;
+    private final RecipeCommandToRecipe recipeCommandToRecipe;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository) {
-        this.recipeRepository = recipeRepository;
-    }
 
     @Override
     public Set<Recipe> getRecipes() {
@@ -43,4 +48,17 @@ public class RecipeServiceImpl implements RecipeService {
 
         return recipeOptional.get();
     }
+
+    @Override
+    @Transactional
+    public RecipeCommand saveRecipeCommand(RecipeCommand command) {
+        Recipe detachedRecipe = recipeCommandToRecipe.convert(command);
+
+        Recipe savedRecipe = recipeRepository.save(detachedRecipe);
+        log.debug("Saved RecipeId = " + savedRecipe.getId());
+
+        return recipeToRecipeCommand.convert(savedRecipe);
+    }
+
+
 }
