@@ -4,6 +4,7 @@ import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
 import com.olegtaranenko.udemy.recipe.converters.RecipeCommandToRecipe;
 import com.olegtaranenko.udemy.recipe.converters.RecipeToRecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
+import com.olegtaranenko.udemy.recipe.exceptions.NotFoundException;
 import com.olegtaranenko.udemy.recipe.repositories.RecipeRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +78,14 @@ public class RecipeServiceImplTest {
         verify(recipeRepository, never()).findAll();
     }
 
+    @Test(expected = NotFoundException.class)
+    public void getRecipeByIdTestNotFound() throws Exception {
+        Optional<Recipe> recipeOptional = Optional.empty();
 
+        when(recipeRepository.findById(anyLong())).thenReturn(recipeOptional);
+
+        Recipe returnedRecipe = recipeService.findById(1L);
+    }
 
     @Test
     public void findByIdTest() {

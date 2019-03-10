@@ -25,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class RecipeControllerTest {
 
+    private final Long RECIPE_ID = 1L;
+    private final Long NEW_RECIPE_ID = 2L;
+
     @Mock
     RecipeService recipeService;
 
@@ -33,24 +36,20 @@ public class RecipeControllerTest {
 
     private MockMvc mockMvc;
 
-    private RecipeController controller;
-
-
 
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
 
-        controller = new RecipeController(recipeService);
+        RecipeController controller = new RecipeController(recipeService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     public void testGetRecipe() throws Exception {
-
-        Recipe recipe = Recipe.builder().id(1L).build();
+        Recipe recipe = Recipe.builder().id(RECIPE_ID).build();
         when(recipeService.findById(anyLong())).thenReturn(recipe);
 
         mockMvc.perform(get("/recipe/1/show"))
@@ -71,7 +70,7 @@ public class RecipeControllerTest {
 
     @Test
     public void testPostNewRecipeForm() throws Exception {
-        RecipeCommand command = RecipeCommand.builder().id(2L).build();
+        RecipeCommand command = RecipeCommand.builder().id(NEW_RECIPE_ID).build();
 
         when(recipeService.saveRecipeCommand(any())).thenReturn(command);
 
@@ -81,13 +80,26 @@ public class RecipeControllerTest {
                 .param("description", "some string")
         )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/recipe/show/2"));
+                .andExpect(view().name("redirect:/recipe/2/show"));
 
     }
 
     @Test
+    public void saveOrUpdateTest() throws Exception {
+        RecipeCommand command = RecipeCommand.builder().id(RECIPE_ID).prepareTime(30).build();
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(command);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/1/show"));
+    }
+
+    @Test
     public void getUpdateViewTest() throws Exception {
-        RecipeCommand command = RecipeCommand.builder().id(2L).build();
+        RecipeCommand command = RecipeCommand.builder().id(NEW_RECIPE_ID).build();
 
         when(recipeService.findCommandById(anyLong())).thenReturn(command);
 
@@ -98,13 +110,14 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void deteteActionTest() throws Exception {
+    public void deleteActionTest() throws Exception {
 
         mockMvc.perform(get("/recipe/1/delete"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"));
 
-        verify(recipeService, times(1)).deleteById(1L);
+        verify(recipeService, times(1)).deleteById(RECIPE_ID);
 
     }
+
 }

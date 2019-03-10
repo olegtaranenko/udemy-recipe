@@ -4,6 +4,7 @@ import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
 import com.olegtaranenko.udemy.recipe.converters.RecipeCommandToRecipe;
 import com.olegtaranenko.udemy.recipe.converters.RecipeToRecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
+import com.olegtaranenko.udemy.recipe.exceptions.NotFoundException;
 import com.olegtaranenko.udemy.recipe.repositories.RecipeRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService {
         Optional<Recipe> recipeOptional = recipeRepository.findById(id);
 
         if (recipeOptional.isEmpty()) {
-            throw new RuntimeException("Recipe not found!");
+            throw new NotFoundException("Recipe not found!");
         }
 
         return recipeOptional.get();

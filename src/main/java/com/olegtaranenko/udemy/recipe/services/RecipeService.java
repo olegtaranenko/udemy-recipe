@@ -20,5 +20,4 @@ public interface RecipeService {
 
     void deleteById(Long id);
 
-//    Set getIngredientList(Long recipeId);
 }
