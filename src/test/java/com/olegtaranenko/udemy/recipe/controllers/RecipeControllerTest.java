@@ -80,6 +80,14 @@ public class RecipeControllerTest {
     }
 
     @Test
+    public void getRecipeNotNumberFormat() throws Exception {
+
+        mockMvc.perform(get("/recipe/aaa/show"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("400error"));
+    }
+
+    @Test
     public void testPostNewRecipeForm() throws Exception {
         RecipeCommand command = RecipeCommand.builder().id(NEW_RECIPE_ID).build();
 
