@@ -98,6 +98,7 @@ public class RecipeControllerTest {
         mockMvc.perform(post("/recipe")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("id", "")
+                .param("directions", "gerade some")
                 .param("description", "some string")
         )
                 .andExpect(status().is3xxRedirection())
@@ -106,13 +107,34 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void saveOrUpdateTest() throws Exception {
-        RecipeCommand command = RecipeCommand.builder().id(RECIPE_ID).prepareTime(30).build();
+    public void testPostNewRecipeFormValidationFail() throws Exception {
+        RecipeCommand command = RecipeCommand.builder().id(NEW_RECIPE_ID).build();
 
         when(recipeService.saveRecipeCommand(any())).thenReturn(command);
 
         mockMvc.perform(post("/recipe")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "")
+                .param("description", "some string")
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/recipeform"));
+
+    }
+
+    @Test
+    public void saveOrUpdateTest() throws Exception {
+        RecipeCommand command = RecipeCommand.builder()
+                .id(RECIPE_ID)
+                .build();
+
+        when(recipeService.saveRecipeCommand(any())).thenReturn(command);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", RECIPE_ID.toString())
+                .param("directions", "gerade some")
+                .param("description", "some string")
         )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/1/show"));
