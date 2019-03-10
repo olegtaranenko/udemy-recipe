@@ -2,15 +2,16 @@ package com.olegtaranenko.udemy.recipe.controllers;
 
 import com.olegtaranenko.udemy.recipe.commands.RecipeCommand;
 import com.olegtaranenko.udemy.recipe.domain.Recipe;
+import com.olegtaranenko.udemy.recipe.exceptions.NotFoundException;
 import com.olegtaranenko.udemy.recipe.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import static java.lang.Long.lowestOneBit;
 import static java.lang.Long.parseLong;
 
 @Controller
@@ -61,5 +62,18 @@ public class RecipeController {
         recipeService.deleteById(Long.valueOf(id));
 
         return "redirect:/";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound(Exception e) {
+        log.error("Handling not found exception");
+        ModelAndView modelAndView = new ModelAndView();
+
+        modelAndView.addObject("exception", e);
+
+        modelAndView.setViewName("404error");
+
+        return modelAndView;
     }
 }
