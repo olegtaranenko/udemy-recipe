@@ -73,5 +73,10 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.deleteById(id);
     }
 
+    @Override
+    public Recipe findByDescription(String pattern) {
+        return recipeRepository.findByDescription(pattern);
+    }
+
 
 }
